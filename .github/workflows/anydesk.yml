@@ -1,0 +1,18 @@
+name: Windows RDP AnyDesk
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Download AnyDesk
+        run: |
+          Invoke-WebRequest -Uri "https://download.anydesk.com/AnyDesk.exe" -OutFile "AnyDesk.exe"
+          Start-Process AnyDesk.exe -ArgumentList "/install" -NoNewWindow -Wait
+
+      - name: Show Info
+        run: |
+          echo "⚠️ AnyDesk installed on GitHub Windows runner."
+          echo "⏳ This session will stop after 6 hours (GitHub limit)."
