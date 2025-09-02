@@ -1,0 +1,39 @@
+name: Perloctel Panel
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm init -y
+          npm install express localtunnel
+
+      - name: Create panel server
+        run: |
+          echo "const express = require('express');
+          const app = express();
+          const adminUser = 'admin';
+          const adminPass = Math.random().toString(36).slice(-8);
+          app.get('/', (req, res) => {
+            res.send(\`<h1>Perloctel Panel</h1>
+                      <p>Admin User: \${adminUser}</p>
+                      <p>Admin Pass: \${adminPass}</p>\`);
+          });
+          app.listen(3000, () => console.log('Panel running...'));
+          " > server.js
+
+      - name: Run panel with public URL
+        run: |
+          npx localtunnel --port 3000 --print-requests
